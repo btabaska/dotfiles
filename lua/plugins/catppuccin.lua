@@ -1,8 +1,8 @@
 return {
-  "catppuccin/nvim", 
-  name = "catppuccin", 
-  priority = 999, 
+  "catppuccin/nvim",
+  name = "catppuccin",
+  priority = 999,
   config = function()
-    vim.cmd.colorscheme "catppuccin"
-  end
+    vim.cmd.colorscheme("catppuccin")
+  end,
 }
