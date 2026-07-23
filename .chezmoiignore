@@ -1,3 +1,7 @@
+# Repo files that must never be applied into $HOME.
+README.md
+install.sh
+
 # On Linux (the rig) only sync the terminal stack — never overwrite the rig's
 # own ssh config, gitconfig, editor, fish universal vars, or completions with
 # the Mac's versions. macOS keeps managing everything.
