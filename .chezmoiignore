@@ -1,0 +1,14 @@
+# On Linux (the rig) only sync the terminal stack — never overwrite the rig's
+# own ssh config, gitconfig, editor, fish universal vars, or completions with
+# the Mac's versions. macOS keeps managing everything.
+{{- if eq .chezmoi.os "linux" }}
+.config/alacritty
+.config/alacritty/**
+.config/nvim
+.config/nvim/**
+.gitconfig
+.ssh/config
+.config/fish/fish_variables
+.config/fish/completions
+.config/fish/completions/**
+{{- end }}
