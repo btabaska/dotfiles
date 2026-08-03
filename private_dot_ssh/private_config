@@ -1,43 +1,49 @@
-# ssh-config.example  ->  install to ~/.ssh/config  (chmod 600)
-#
-# Break-glass SSH for when Tailscale SSH (net-13) can't be used (control plane
-# unreachable, a client without the tailnet, etc). One ed25519 key, friendly
-# aliases over MagicDNS names, agent forwarding OFF by default.
-#
-# Track this with chezmoi (glue-04) so a rebuilt box gets it back automatically.
-# Replace <tailnet-name> with your tailnet's MagicDNS suffix (e.g. tail1234.ts.net)
-# and each User with your actual login on that host. Use a DEDICATED admin user
-# (<admin-user>), NOT the default `admin`/`root` — see ssh-maintenance-access.md §3.
-
+# Homelab break-glass SSH (net-14) — default key for fleet hosts
 Host *
     AddKeysToAgent yes
     IdentityFile ~/.ssh/id_ed25519_homelab
+    IdentitiesOnly yes
     ForwardAgent no
     ServerAliveInterval 30
     ServerAliveCountMax 3
 
+Host github.com
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
 Host nas
-    HostName nas.<tailnet-name>.ts.net
-    User <admin-user>
+    HostName nas.tailb31641.ts.net
+    User btabaska
 
-Host mini
-    HostName macmini.<tailnet-name>.ts.net
-    User <admin-user>
+Host mini server
+    HostName macmini.tailb31641.ts.net
+    User btabaska
 
-# On-demand box: wake it first with scripts/gaming/wake-rig.sh (game-08),
-# then `ssh rig`. RequestTTY keeps interactive sessions sane after a cold wake.
+# Wake first: RIG_MAC=... ./scripts/gaming/wake-rig.sh
 Host rig
-    HostName cachyos.<tailnet-name>.ts.net
-    User <admin-user>
+    HostName cachyos.tailb31641.ts.net
+    User btabaska
+    RequestTTY yes
 
-# Home Assistant OS: reachable via the Advanced SSH & Web Terminal add-on
-# (default port 22). For the low-level debug shell use port 22222 instead.
-# HAOS has no normal user shell, so root is expected here (unlike the other hosts).
+# Dedicated alias for VSCodium Open Remote-SSH. No forced TTY — RequestTTY yes
+# corrupts the remote-server bootstrap handshake. Same host as `rig`.
+Host rig-code
+    HostName cachyos.tailb31641.ts.net
+    User btabaska
+    RequestTTY no
+
 Host ha
-    HostName homeassistant.<tailnet-name>.ts.net
+    HostName homeassistant.tailb31641.ts.net
     User root
 
-# Seedbox: the username is assigned by your provider's control panel.
 Host seedbox
-    HostName seedbox.<tailnet-name>.ts.net
-    User <seedbox-user>
+    HostName seedbox.tailb31641.ts.net
+    User btabaska
+
+# Forgejo on the mini (self-hosted git) — fixes the broken `forgejo` remote alias
+Host forgejo
+    HostName macmini.tailb31641.ts.net
+    Port 2222
+    User git
+    IdentityFile ~/.ssh/id_ed25519_homelab
